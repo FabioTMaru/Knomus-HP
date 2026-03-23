@@ -1,0 +1,1027 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Knomus — Estude como nunca antes</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet"/>
+<style>
+:root {
+  --bg: #06060a;
+  --bg2: #0d0d14;
+  --bg3: #13131e;
+  --purple: #7c5cfc;
+  --purple2: #a78bfa;
+  --gold: #f5c842;
+  --green: #3dffa0;
+  --red: #ff4f4f;
+  --text: #e8e8f4;
+  --muted: #7070a0;
+  --border: rgba(124,92,252,0.18);
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'DM Sans', sans-serif;
+  font-size: 16px;
+  line-height: 1.6;
+  overflow-x: hidden;
+}
+
+/* ── NOISE OVERLAY ── */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+  pointer-events: none;
+  z-index: 0;
+  opacity: 0.5;
+}
+
+/* ── GLOW BLOBS ── */
+.blob {
+  position: fixed;
+  border-radius: 50%;
+  filter: blur(120px);
+  pointer-events: none;
+  z-index: 0;
+  opacity: 0.12;
+}
+.blob-1 { width: 600px; height: 600px; background: var(--purple); top: -200px; left: -200px; }
+.blob-2 { width: 500px; height: 500px; background: #c026d3; bottom: -100px; right: -100px; }
+.blob-3 { width: 300px; height: 300px; background: var(--gold); top: 50%; left: 50%; transform: translate(-50%,-50%); opacity: 0.05; }
+
+/* ── NAV ── */
+nav {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 18px 40px;
+  background: rgba(6,6,10,0.7);
+  backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--border);
+}
+.nav-logo {
+  font-family: 'Syne', sans-serif;
+  font-size: 22px;
+  font-weight: 800;
+  letter-spacing: -0.5px;
+  color: #fff;
+}
+.nav-logo span { color: var(--gold); }
+.nav-links {
+  display: flex;
+  align-items: center;
+  gap: 32px;
+  list-style: none;
+}
+.nav-links a {
+  color: var(--muted);
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: 500;
+  transition: color 0.2s;
+}
+.nav-links a:hover { color: var(--text); }
+.btn-nav {
+  background: var(--purple);
+  color: #fff;
+  padding: 9px 20px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  text-decoration: none;
+  transition: all 0.2s;
+  border: 1px solid rgba(255,255,255,0.1);
+}
+.btn-nav:hover { background: #6a4ee8; transform: translateY(-1px); }
+.btn-lang {
+  background: transparent;
+  color: var(--muted);
+  padding: 9px 14px;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  text-decoration: none;
+  border: 1px solid var(--border);
+  transition: all 0.2s;
+}
+.btn-lang:hover { border-color: var(--purple); color: var(--purple2); }
+
+/* ── HERO ── */
+.hero {
+  position: relative;
+  z-index: 1;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 140px 24px 80px;
+}
+
+.hero-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(124,92,252,0.12);
+  border: 1px solid rgba(124,92,252,0.3);
+  border-radius: 100px;
+  padding: 6px 16px;
+  font-size: 13px;
+  color: var(--purple2);
+  font-weight: 500;
+  margin-bottom: 28px;
+  animation: fadeUp 0.6s ease both;
+}
+.hero-badge .dot { width: 7px; height: 7px; background: var(--green); border-radius: 50%; animation: pulse 2s infinite; }
+@keyframes pulse { 0%,100% { opacity:1; } 50% { opacity:0.4; } }
+
+.hero h1 {
+  font-family: 'Syne', sans-serif;
+  font-size: clamp(42px, 7vw, 88px);
+  font-weight: 800;
+  line-height: 1.0;
+  letter-spacing: -2px;
+  margin-bottom: 24px;
+  animation: fadeUp 0.6s 0.1s ease both;
+}
+.hero h1 em {
+  font-style: normal;
+  background: linear-gradient(135deg, var(--purple2), var(--gold));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+.hero-sub {
+  font-size: clamp(16px, 2vw, 20px);
+  color: var(--muted);
+  max-width: 560px;
+  margin: 0 auto 40px;
+  font-weight: 300;
+  animation: fadeUp 0.6s 0.2s ease both;
+}
+.hero-sub strong { color: var(--text); font-weight: 500; }
+
+.hero-cta {
+  display: flex;
+  gap: 14px;
+  justify-content: center;
+  flex-wrap: wrap;
+  animation: fadeUp 0.6s 0.3s ease both;
+  margin-bottom: 60px;
+}
+.btn-primary {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--purple);
+  color: #fff;
+  padding: 14px 28px;
+  border-radius: 10px;
+  font-size: 15px;
+  font-weight: 600;
+  text-decoration: none;
+  transition: all 0.2s;
+  border: 1px solid rgba(255,255,255,0.1);
+  box-shadow: 0 0 40px rgba(124,92,252,0.3);
+}
+.btn-primary:hover { transform: translateY(-2px); box-shadow: 0 0 60px rgba(124,92,252,0.5); background: #6a4ee8; }
+.btn-secondary {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: transparent;
+  color: var(--text);
+  padding: 14px 28px;
+  border-radius: 10px;
+  font-size: 15px;
+  font-weight: 500;
+  text-decoration: none;
+  border: 1px solid var(--border);
+  transition: all 0.2s;
+}
+.btn-secondary:hover { border-color: var(--purple); color: var(--purple2); }
+
+/* ── MOCK EXTENSÃO ── */
+.hero-mock {
+  animation: fadeUp 0.8s 0.4s ease both;
+  position: relative;
+  width: 100%;
+  max-width: 340px;
+  margin: 0 auto;
+}
+.mock-window {
+  background: #0d0d18;
+  border: 1px solid rgba(124,92,252,0.25);
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 40px 120px rgba(0,0,0,0.6), 0 0 0 1px rgba(124,92,252,0.1);
+}
+.mock-header {
+  background: linear-gradient(135deg, #7c5cfc, #a855f7);
+  padding: 12px 16px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.mock-logo { font-family: 'Syne', sans-serif; font-size: 18px; font-weight: 800; color: #fff; }
+.mock-logo span { color: var(--gold); }
+.mock-sub { font-size: 10px; color: rgba(255,255,255,0.65); }
+.mock-tabs {
+  display: flex;
+  background: #13131e;
+  border-bottom: 1px solid rgba(255,255,255,0.05);
+}
+.mock-tab {
+  flex: 1;
+  padding: 8px 4px;
+  text-align: center;
+  font-size: 10px;
+  color: #555;
+}
+.mock-tab.a { color: #a78bfa; border-bottom: 2px solid #7c5cfc; background: #0f0f1a; }
+.mock-body { padding: 14px; display: flex; flex-direction: column; gap: 10px; }
+.mock-btn {
+  background: #7c5cfc;
+  color: #fff;
+  border-radius: 8px;
+  padding: 9px;
+  text-align: center;
+  font-size: 12px;
+  font-weight: 600;
+}
+.mock-dropdowns { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
+.mock-drop {
+  background: #1a1a28;
+  border: 1px solid #2a2a40;
+  border-radius: 6px;
+  padding: 6px 8px;
+  font-size: 10px;
+  color: #888;
+}
+.mock-result {
+  background: #1a1a28;
+  border: 1px solid #2a2a40;
+  border-radius: 8px;
+  padding: 10px;
+  font-size: 10px;
+  color: #aaa;
+  line-height: 1.7;
+  text-align: left;
+}
+.mock-result .r1 { color: #a78bfa; font-weight: 700; margin-bottom: 4px; }
+.mock-result .r2 { color: #7ef7a8; }
+.mock-result .r3 { color: #ffd700; }
+.mock-copy {
+  background: #1a2a1a;
+  border: 1px solid #2d5a2d;
+  border-radius: 8px;
+  padding: 8px;
+  text-align: center;
+  font-size: 11px;
+  color: #7ef7a8;
+  font-weight: 600;
+}
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(24px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ── SECÇÕES GERAIS ── */
+section { position: relative; z-index: 1; padding: 100px 24px; }
+.container { max-width: 1100px; margin: 0 auto; }
+.section-label {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--purple2);
+  margin-bottom: 14px;
+}
+.section-title {
+  font-family: 'Syne', sans-serif;
+  font-size: clamp(32px, 4vw, 52px);
+  font-weight: 800;
+  letter-spacing: -1.5px;
+  line-height: 1.1;
+  margin-bottom: 16px;
+}
+.section-desc {
+  font-size: 17px;
+  color: var(--muted);
+  max-width: 540px;
+  font-weight: 300;
+}
+
+/* ── SOCIAL PROOF ── */
+.proof-bar {
+  position: relative;
+  z-index: 1;
+  background: var(--bg2);
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+  padding: 20px 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 48px;
+  flex-wrap: wrap;
+}
+.proof-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 13px;
+  color: var(--muted);
+}
+.proof-item strong { color: var(--text); font-family: 'Syne', sans-serif; font-size: 22px; font-weight: 700; }
+
+/* ── DIFERENCIAL ── */
+.diff-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 20px;
+  margin-top: 56px;
+}
+.diff-card {
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 28px;
+  transition: all 0.25s;
+  position: relative;
+  overflow: hidden;
+}
+.diff-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, var(--purple), transparent);
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+.diff-card:hover { border-color: rgba(124,92,252,0.4); transform: translateY(-4px); }
+.diff-card:hover::before { opacity: 1; }
+.diff-icon { font-size: 32px; margin-bottom: 16px; }
+.diff-card h3 { font-family: 'Syne', sans-serif; font-size: 18px; font-weight: 700; margin-bottom: 10px; letter-spacing: -0.3px; }
+.diff-card p { font-size: 14px; color: var(--muted); line-height: 1.7; }
+.diff-tag {
+  display: inline-block;
+  margin-top: 14px;
+  font-size: 11px;
+  font-weight: 600;
+  padding: 3px 10px;
+  border-radius: 100px;
+  background: rgba(61,255,160,0.1);
+  color: var(--green);
+  border: 1px solid rgba(61,255,160,0.2);
+}
+
+/* ── COMO FUNCIONA ── */
+.steps {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 0;
+  margin-top: 60px;
+  position: relative;
+}
+.steps::before {
+  content: '';
+  position: absolute;
+  top: 32px; left: 15%; right: 15%;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--border), transparent);
+}
+.step {
+  text-align: center;
+  padding: 0 24px;
+}
+.step-num {
+  width: 64px; height: 64px;
+  background: var(--bg3);
+  border: 1px solid var(--border);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Syne', sans-serif;
+  font-size: 22px;
+  font-weight: 800;
+  color: var(--purple2);
+  margin: 0 auto 20px;
+  position: relative;
+  z-index: 1;
+  transition: all 0.3s;
+}
+.step:hover .step-num { background: var(--purple); color: #fff; border-color: var(--purple); box-shadow: 0 0 30px rgba(124,92,252,0.4); }
+.step h3 { font-family: 'Syne', sans-serif; font-size: 16px; font-weight: 700; margin-bottom: 8px; }
+.step p { font-size: 13px; color: var(--muted); }
+
+/* ── COMPETIDORES ── */
+.comp-section { background: var(--bg2); }
+.comp-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 48px;
+  font-size: 14px;
+}
+.comp-table th {
+  padding: 14px 16px;
+  text-align: left;
+  font-family: 'Syne', sans-serif;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  color: var(--muted);
+  border-bottom: 1px solid var(--border);
+}
+.comp-table td {
+  padding: 14px 16px;
+  border-bottom: 1px solid rgba(255,255,255,0.04);
+  color: var(--muted);
+}
+.comp-table tr.knomus-row td {
+  color: var(--text);
+  background: rgba(124,92,252,0.06);
+  font-weight: 500;
+}
+.comp-table tr.knomus-row td:first-child {
+  font-family: 'Syne', sans-serif;
+  font-weight: 800;
+  color: var(--purple2);
+}
+.check-yes { color: var(--green); font-size: 16px; }
+.check-no  { color: #444; font-size: 16px; }
+.check-partial { color: var(--gold); font-size: 14px; }
+
+/* ── PROOF CARD ── */
+.proof-card {
+  background: rgba(255,79,79,0.06);
+  border: 1px solid rgba(255,79,79,0.2);
+  border-radius: 14px;
+  padding: 24px 28px;
+  margin-top: 40px;
+  display: flex;
+  gap: 18px;
+  align-items: flex-start;
+}
+.proof-card .icon { font-size: 28px; flex-shrink: 0; }
+.proof-card h4 { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 16px; margin-bottom: 6px; }
+.proof-card p { font-size: 14px; color: var(--muted); line-height: 1.6; }
+.proof-card em { font-style: italic; color: var(--red); }
+
+/* ── PRICING ── */
+.pricing-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 20px;
+  margin-top: 56px;
+}
+.plan {
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 32px 28px;
+  position: relative;
+  transition: all 0.25s;
+}
+.plan:hover { transform: translateY(-4px); }
+.plan.featured {
+  border-color: var(--purple);
+  background: linear-gradient(135deg, rgba(124,92,252,0.1), rgba(168,85,247,0.05));
+  box-shadow: 0 0 60px rgba(124,92,252,0.15);
+}
+.plan-badge {
+  position: absolute;
+  top: -12px; left: 50%; transform: translateX(-50%);
+  background: var(--purple);
+  color: #fff;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 4px 14px;
+  border-radius: 100px;
+  white-space: nowrap;
+}
+.plan-name {
+  font-family: 'Syne', sans-serif;
+  font-size: 14px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: var(--muted);
+  margin-bottom: 12px;
+}
+.plan-price {
+  font-family: 'Syne', sans-serif;
+  font-size: 48px;
+  font-weight: 800;
+  letter-spacing: -2px;
+  line-height: 1;
+  margin-bottom: 4px;
+}
+.plan-price span { font-size: 18px; font-weight: 400; color: var(--muted); vertical-align: top; margin-top: 10px; display: inline-block; }
+.plan-period { font-size: 13px; color: var(--muted); margin-bottom: 24px; }
+.plan-features { list-style: none; display: flex; flex-direction: column; gap: 10px; margin-bottom: 28px; }
+.plan-features li {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 14px;
+  color: var(--muted);
+}
+.plan-features li .ok { color: var(--green); font-size: 15px; }
+.plan-features li strong { color: var(--text); }
+.btn-plan {
+  display: block;
+  text-align: center;
+  padding: 12px;
+  border-radius: 10px;
+  font-size: 14px;
+  font-weight: 600;
+  text-decoration: none;
+  transition: all 0.2s;
+  border: 1px solid var(--border);
+  color: var(--text);
+}
+.btn-plan:hover { border-color: var(--purple); color: var(--purple2); }
+.plan.featured .btn-plan {
+  background: var(--purple);
+  color: #fff;
+  border-color: var(--purple);
+  box-shadow: 0 0 30px rgba(124,92,252,0.3);
+}
+.plan.featured .btn-plan:hover { background: #6a4ee8; }
+
+/* ── TESTEMUNHOS ── */
+.testimonials { background: var(--bg2); }
+.testi-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; margin-top: 48px; }
+.testi-card {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 24px;
+}
+.testi-stars { color: var(--gold); font-size: 14px; margin-bottom: 12px; letter-spacing: 2px; }
+.testi-text { font-size: 14px; color: var(--muted); line-height: 1.7; margin-bottom: 18px; font-style: italic; }
+.testi-author { display: flex; align-items: center; gap: 12px; }
+.testi-avatar {
+  width: 38px; height: 38px;
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 16px;
+  background: var(--bg2);
+  border: 1px solid var(--border);
+}
+.testi-name { font-family: 'Syne', sans-serif; font-size: 14px; font-weight: 700; }
+.testi-role { font-size: 12px; color: var(--muted); }
+
+/* ── CTA FINAL ── */
+.cta-section {
+  text-align: center;
+  padding: 120px 24px;
+}
+.cta-section .section-title { font-size: clamp(36px, 5vw, 64px); }
+.cta-section .section-desc { margin: 20px auto 40px; }
+.cta-note { font-size: 13px; color: var(--muted); margin-top: 16px; }
+
+/* ── FOOTER ── */
+footer {
+  position: relative;
+  z-index: 1;
+  background: var(--bg2);
+  border-top: 1px solid var(--border);
+  padding: 40px 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: gap;
+  gap: 20px;
+}
+.footer-logo { font-family: 'Syne', sans-serif; font-size: 20px; font-weight: 800; }
+.footer-logo span { color: var(--gold); }
+.footer-links { display: flex; gap: 24px; flex-wrap: wrap; }
+.footer-links a { font-size: 13px; color: var(--muted); text-decoration: none; transition: color 0.2s; }
+.footer-links a:hover { color: var(--text); }
+.footer-copy { font-size: 13px; color: var(--muted); }
+
+/* ── SCROLL ANIMATIONS ── */
+.reveal {
+  opacity: 0;
+  transform: translateY(30px);
+  transition: opacity 0.6s ease, transform 0.6s ease;
+}
+.reveal.visible { opacity: 1; transform: translateY(0); }
+
+/* ── RESPONSIVE ── */
+@media (max-width: 768px) {
+  nav { padding: 14px 20px; }
+  .nav-links { display: none; }
+  .proof-bar { gap: 24px; }
+  .steps::before { display: none; }
+  footer { flex-direction: column; text-align: center; }
+}
+</style>
+</head>
+<body>
+
+<div class="blob blob-1"></div>
+<div class="blob blob-2"></div>
+<div class="blob blob-3"></div>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-logo">Kno<span>mus</span></div>
+  <ul class="nav-links">
+    <li><a href="#como-funciona">Como funciona</a></li>
+    <li><a href="#diferenciais">Diferenciais</a></li>
+    <li><a href="#precos">Preços</a></li>
+  </ul>
+  <a href="#precos" class="btn-nav">Começar grátis →</a>
+  <a href="/en" class="btn-lang">🌐 EN</a>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-badge">
+    <span class="dot"></span>
+    Extensão Chrome gratuita · Sem cadastro para começar
+  </div>
+  <h1>Estude mais rápido.<br/><em>Muito mais rápido.</em></h1>
+  <p class="hero-sub">
+    Knomus captura e resume qualquer conteúdo educacional com IA —
+    <strong>inclusive páginas com login</strong> como Moodle e sistemas de faculdade.
+    Nenhum concorrente consegue fazer isso.
+  </p>
+  <div class="hero-cta">
+    <a href="#" class="btn-primary">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+      Instalar extensão grátis
+    </a>
+    <a href="#como-funciona" class="btn-secondary">Ver como funciona ↓</a>
+  </div>
+
+  <!-- MOCK DA EXTENSÃO -->
+  <div class="hero-mock">
+    <div class="mock-window">
+      <div class="mock-header">
+        <div>
+          <div class="mock-logo">Kno<span>mus</span></div>
+          <div class="mock-sub">Resumos com IA para estudantes</div>
+        </div>
+      </div>
+      <div class="mock-tabs">
+        <div class="mock-tab a">📄 Página</div>
+        <div class="mock-tab">📑 Slides</div>
+        <div class="mock-tab">📎 PDF</div>
+        <div class="mock-tab">▶️ Vídeo</div>
+      </div>
+      <div class="mock-body">
+        <div class="mock-btn">📄 Capturar página atual</div>
+        <div class="mock-dropdowns">
+          <div class="mock-drop">📝 Prova</div>
+          <div class="mock-drop">📄 Resumo</div>
+          <div class="mock-drop">⚡ Automático</div>
+          <div class="mock-drop">🎓 Graduação</div>
+        </div>
+        <div class="mock-btn" style="background:linear-gradient(135deg,#7c5cfc,#a855f7)">✨ Gerar resumo com IA</div>
+        <div class="mock-result">
+          <div class="r1">📌 REVOLUÇÃO FRANCESA — 1789</div>
+          <div class="r2">✅ Queda da Bastilha — 14 jul 1789</div>
+          <div>💡 Causas: crise fiscal + desigualdade social</div>
+          <div class="r3">🎯 Declaração dos Direitos do Homem</div>
+          <div>⚠️ Terror: 1793–1794, Robespierre</div>
+        </div>
+        <div class="mock-copy">📋 Copiar resumo</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PROOF BAR -->
+<div class="proof-bar">
+  <div class="proof-item">
+    <span>🎓</span>
+    <div><strong>100%</strong><br/>Gratuito para começar</div>
+  </div>
+  <div class="proof-item">
+    <span>⚡</span>
+    <div><strong>~5s</strong><br/>Por resumo gerado</div>
+  </div>
+  <div class="proof-item">
+    <span>📄</span>
+    <div><strong>313</strong><br/>Páginas de PDF num resumo</div>
+  </div>
+  <div class="proof-item">
+    <span>🏆</span>
+    <div><strong>Único</strong><br/>A capturar páginas com login</div>
+  </div>
+</div>
+
+<!-- DIFERENCIAIS -->
+<section id="diferenciais">
+  <div class="container">
+    <div class="section-label reveal">Por que o Knomus?</div>
+    <h2 class="section-title reveal">O que nenhum<br/>concorrente tem</h2>
+    <p class="section-desc reveal">Testamos ao vivo. Monica AI disse "não consigo acessar conteúdos restritos". Knomus funcionou normalmente.</p>
+
+    <div class="diff-grid">
+      <div class="diff-card reveal">
+        <div class="diff-icon">🔐</div>
+        <h3>Captura páginas com login</h3>
+        <p>Moodle, sistemas de faculdade, LMS — qualquer página onde estás logado. Nenhum concorrente consegue fazer isso.</p>
+        <div class="diff-tag">✓ Validado ao vivo na Unisinos</div>
+      </div>
+      <div class="diff-card reveal">
+        <div class="diff-icon">📑</div>
+        <h3>Modo slides automático</h3>
+        <p>Detecta quando mudas de slide (clique ou teclas) e captura automaticamente. Resume toda a aula de uma vez.</p>
+        <div class="diff-tag">✓ Funciona em qualquer plataforma</div>
+      </div>
+      <div class="diff-card reveal">
+        <div class="diff-icon">📎</div>
+        <h3>PDFs completos até 313 páginas</h3>
+        <p>Upload direto na sidebar. Divide em blocos, resume cada um e consolida num único resumo coeso e completo.</p>
+        <div class="diff-tag">✓ Seleciona intervalo de páginas</div>
+      </div>
+      <div class="diff-card reveal">
+        <div class="diff-icon">▶️</div>
+        <h3>Resumo de vídeo e YouTube</h3>
+        <p>Cola URL do YouTube ou captura legendas ao vivo enquanto assistes. Funciona com Video.js, Spalla, Vimeo e mais.</p>
+        <div class="diff-tag">✓ Transcrição em pt-BR automática</div>
+      </div>
+      <div class="diff-card reveal">
+        <div class="diff-icon">🃏</div>
+        <h3>Flashcards, tópicos, mapas mentais</h3>
+        <p>Não é só resumo — escolhe o tipo de saída: tópicos para revisar rápido, flashcards para memorizar, mapa mental para entender.</p>
+        <div class="diff-tag">✓ 4 tipos de output</div>
+      </div>
+      <div class="diff-card reveal">
+        <div class="diff-icon">📱</div>
+        <h3>Funciona direto no WhatsApp</h3>
+        <p>Formato limpo sem markdown — usa emojis e travessões. Cola direto num grupo de estudos sem formatação quebrada.</p>
+        <div class="diff-tag">✓ Testado e aprovado</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- COMO FUNCIONA -->
+<section id="como-funciona" style="background: var(--bg2);">
+  <div class="container">
+    <div class="section-label reveal">Simples assim</div>
+    <h2 class="section-title reveal">3 cliques para<br/>um resumo completo</h2>
+
+    <div class="steps">
+      <div class="step reveal">
+        <div class="step-num">1</div>
+        <h3>Instala a extensão</h3>
+        <p>Grátis na Chrome Web Store. Sem cadastro obrigatório para começar.</p>
+      </div>
+      <div class="step reveal">
+        <div class="step-num">2</div>
+        <h3>Captura o conteúdo</h3>
+        <p>Página, slides, PDF ou vídeo — um clique e o texto é capturado automaticamente.</p>
+      </div>
+      <div class="step reveal">
+        <div class="step-num">3</div>
+        <h3>Gera o resumo</h3>
+        <p>Escolhe objetivo, tipo e nível. A IA gera em ~5 segundos. Copia e usa.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CONCORRENTES -->
+<section class="comp-section">
+  <div class="container">
+    <div class="section-label reveal">Comparação honesta</div>
+    <h2 class="section-title reveal">Knomus vs concorrentes</h2>
+
+    <table class="comp-table reveal">
+      <thead>
+        <tr>
+          <th>Produto</th>
+          <th>Captura login</th>
+          <th>Modo slides</th>
+          <th>PDF upload</th>
+          <th>YouTube</th>
+          <th>Preço BR</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr class="knomus-row">
+          <td>⚡ Knomus</td>
+          <td><span class="check-yes">✓</span></td>
+          <td><span class="check-yes">✓</span></td>
+          <td><span class="check-yes">✓</span></td>
+          <td><span class="check-yes">✓</span></td>
+          <td>Grátis / R$20</td>
+        </tr>
+        <tr>
+          <td>Monica AI</td>
+          <td><span class="check-no">✗</span></td>
+          <td><span class="check-no">✗</span></td>
+          <td><span class="check-partial">~</span></td>
+          <td><span class="check-yes">✓</span></td>
+          <td>Dólar</td>
+        </tr>
+        <tr>
+          <td>NotebookLM</td>
+          <td><span class="check-no">✗</span></td>
+          <td><span class="check-no">✗</span></td>
+          <td><span class="check-yes">✓</span></td>
+          <td><span class="check-partial">~</span></td>
+          <td>Grátis*</td>
+        </tr>
+        <tr>
+          <td>Knowt</td>
+          <td><span class="check-no">✗</span></td>
+          <td><span class="check-partial">~</span></td>
+          <td><span class="check-yes">✓</span></td>
+          <td><span class="check-partial">~</span></td>
+          <td>Dólar</td>
+        </tr>
+        <tr>
+          <td>Quizlet</td>
+          <td><span class="check-no">✗</span></td>
+          <td><span class="check-no">✗</span></td>
+          <td><span class="check-yes">✓</span></td>
+          <td><span class="check-no">✗</span></td>
+          <td>Paywall agressivo</td>
+        </tr>
+        <tr>
+          <td>Eightify</td>
+          <td><span class="check-no">✗</span></td>
+          <td><span class="check-no">✗</span></td>
+          <td><span class="check-no">✗</span></td>
+          <td><span class="check-yes">✓</span></td>
+          <td>Dólar</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="proof-card reveal">
+      <div class="icon">🧪</div>
+      <div>
+        <h4>Teste ao vivo — Unisinos, março 2026</h4>
+        <p>Abrimos a mesma página do sistema da faculdade (com login) no Monica AI e no Knomus. Monica retornou: <em>"Desculpe, não consigo acessar links externos ou conteúdos restritos."</em> O Knomus capturou e resumiu normalmente em menos de 5 segundos.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PREÇOS -->
+<section id="precos">
+  <div class="container">
+    <div class="section-label reveal">Preços</div>
+    <h2 class="section-title reveal">Simples e transparente</h2>
+    <p class="section-desc reveal">Começa grátis. Só paga quando precisares de mais.</p>
+
+    <div class="pricing-grid">
+      <div class="plan reveal">
+        <div class="plan-name">Free</div>
+        <div class="plan-price">R$<span>0</span></div>
+        <div class="plan-period">para sempre</div>
+        <ul class="plan-features">
+          <li><span class="ok">✓</span> <strong>5 resumos</strong> por mês</li>
+          <li><span class="ok">✓</span> Todos os modos de captura</li>
+          <li><span class="ok">✓</span> PDF até 50 páginas</li>
+          <li><span class="ok">✓</span> Flashcards e tópicos</li>
+        </ul>
+        <a href="#" class="btn-plan">Instalar grátis</a>
+      </div>
+
+      <div class="plan featured reveal">
+        <div class="plan-badge">⭐ Mais popular</div>
+        <div class="plan-name">Plus</div>
+        <div class="plan-price">R$<span>20</span></div>
+        <div class="plan-period">por mês</div>
+        <ul class="plan-features">
+          <li><span class="ok">✓</span> <strong>100 resumos</strong> por mês</li>
+          <li><span class="ok">✓</span> PDF até 100 páginas</li>
+          <li><span class="ok">✓</span> Flashcards ilimitados</li>
+          <li><span class="ok">✓</span> Histórico de resumos</li>
+          <li><span class="ok">✓</span> Suporte prioritário</li>
+        </ul>
+        <a href="#" class="btn-plan">Assinar Plus</a>
+      </div>
+
+      <div class="plan reveal">
+        <div class="plan-name">Pro</div>
+        <div class="plan-price">R$<span>50</span></div>
+        <div class="plan-period">por mês</div>
+        <ul class="plan-features">
+          <li><span class="ok">✓</span> <strong>150 resumos</strong> por mês</li>
+          <li><span class="ok">✓</span> PDFs completos (313+ páginas)</li>
+          <li><span class="ok">✓</span> Avatar premium (em breve)</li>
+          <li><span class="ok">✓</span> Sala privada (em breve)</li>
+          <li><span class="ok">✓</span> Acesso antecipado a novidades</li>
+        </ul>
+        <a href="#" class="btn-plan">Assinar Pro</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TESTEMUNHOS -->
+<section class="testimonials">
+  <div class="container">
+    <div class="section-label reveal">Quem usa</div>
+    <h2 class="section-title reveal">Estudantes reais,<br/>resultados reais</h2>
+    <div class="testi-grid">
+      <div class="testi-card reveal">
+        <div class="testi-stars">★★★★★</div>
+        <p class="testi-text">"Resumiu 80 slides da minha aula de Direito em 20 segundos. Colei direto no grupo da turma e todo mundo ficou maluco. Nunca mais vou estudar sem o Knomus."</p>
+        <div class="testi-author">
+          <div class="testi-avatar">👩‍⚖️</div>
+          <div>
+            <div class="testi-name">Mariana S.</div>
+            <div class="testi-role">Direito — PUCRS</div>
+          </div>
+        </div>
+      </div>
+      <div class="testi-card reveal">
+        <div class="testi-stars">★★★★★</div>
+        <p class="testi-text">"Tentei o Monica AI na página do Moodle da faculdade e ele disse que não conseguia acessar. O Knomus capturou tudo na hora. É exatamente o que eu precisava."</p>
+        <div class="testi-author">
+          <div class="testi-avatar">👨‍💻</div>
+          <div>
+            <div class="testi-name">Rafael T.</div>
+            <div class="testi-role">Engenharia — Unisinos</div>
+          </div>
+        </div>
+      </div>
+      <div class="testi-card reveal">
+        <div class="testi-stars">★★★★★</div>
+        <p class="testi-text">"Tenho 3 apostilas de 200 páginas cada para o concurso. Resumiu tudo em tópicos por banca, já no formato do CESPE. Economizei semanas de revisão."</p>
+        <div class="testi-author">
+          <div class="testi-avatar">🏛️</div>
+          <div>
+            <div class="testi-name">Beatriz C.</div>
+            <div class="testi-role">Concurseira — Receita Federal</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA FINAL -->
+<section class="cta-section">
+  <div class="container">
+    <div class="section-label reveal">Começa agora</div>
+    <h2 class="section-title reveal">Tua próxima prova<br/>começa <em>aqui</em></h2>
+    <p class="section-desc reveal">Instala em 30 segundos. Grátis para sempre no plano básico.</p>
+    <div class="hero-cta reveal">
+      <a href="#" class="btn-primary">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+        Instalar grátis no Chrome
+      </a>
+    </div>
+    <p class="cta-note">Sem cartão de crédito · Sem cadastro obrigatório · Cancela quando quiser</p>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-logo">Kno<span>mus</span></div>
+  <div class="footer-links">
+    <a href="#">Termos de uso</a>
+    <a href="#">Privacidade</a>
+    <a href="#">Contato</a>
+    <a href="#">Instagram</a>
+  </div>
+  <div class="footer-copy">© 2026 Knomus. Todos os direitos reservados.</div>
+</footer>
+
+<script>
+// Scroll reveal
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(e => {
+    if (e.isIntersecting) { e.target.classList.add('visible'); }
+  });
+}, { threshold: 0.1 });
+document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+// Stagger cards
+document.querySelectorAll('.diff-grid .diff-card, .pricing-grid .plan, .testi-grid .testi-card').forEach((el, i) => {
+  el.style.transitionDelay = (i % 3) * 0.1 + 's';
+});
+</script>
+</body>
+</html>
